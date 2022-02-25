@@ -2,12 +2,7 @@
   <div id="MyNfts" class="container">
     <div v-if="nftList.length == 0" class="empty">
       <img src="@/assets/images/empty.png" alt="" />
-      <p>No NFTs to display！</p>
-      <p class="bold">
-        Let
-        <router-link to="/create">create</router-link>
-        one.
-      </p>
+      <p>No NFTs to display!</p>
     </div>
     <el-row v-else>
       <el-col :lg="8" :md="8" v-for="(item, index) in nftList" :key="index">
