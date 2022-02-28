@@ -120,16 +120,19 @@ export default {
   },
   methods: {
     setContractAddress() {
-      // getContractAddress().then((res) => {
-      //   if (res.code == 200) {
-      //     this.deployment = res.data.contractAddress;
-      //     this.getNftsItemInfo();
-      //     this.getNftsItemList();
-      //   }
-      // });
-      this.deployment = "0x20B51Ed7E9CF1cc1ACF30d72413ADCeAD3469701";
-      this.getNftsItemInfo();
-      this.getNftsItemList();
+      this.deployment = process.env.VUE_APP_CONTRACT_ADDR;
+      if (this.deployment) {
+        this.getNftsItemInfo();
+        this.getNftsItemList();
+      } else {
+        getContractAddress().then((res) => {
+          if (res.code == 200) {
+            this.deployment = res.data.contractAddress;
+            this.getNftsItemInfo();
+            this.getNftsItemList();
+          }
+        });
+      }
     },
     getNftsItemInfo() {
       getNFTsCollectionItem(this.deployment).then((res) => {
