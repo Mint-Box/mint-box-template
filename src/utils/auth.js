@@ -73,9 +73,7 @@ export async function setContractAddress() {
   let deployment = process.env.VUE_APP_CONTRACT_ADDR;
   if (!deployment) {
     const { data } = await getContractAddress();
-    console.log(data);
     deployment = data.contractAddress;
   }
-
   store.commit(UPDATE_CONTRACTADDR, deployment);
 }
