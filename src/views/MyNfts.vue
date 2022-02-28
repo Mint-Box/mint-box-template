@@ -53,9 +53,15 @@
 </template>
 <script>
 import { getMyNftList } from "@/api";
+import { setContractAddress } from "@/utils/auth";
 
 export default {
   name: "MyNfts",
+  computed: {
+    deployment() {
+      return this.$store.state.contractAddr;
+    },
+  },
   data() {
     return {
       nftList: [],
@@ -64,9 +70,14 @@ export default {
     };
   },
   methods: {
+    async init() {
+      if (!this.deployment) {
+        await setContractAddress();
+      }
+      this.getList();
+    },
     getList() {
-      let deployment = "0x20B51Ed7E9CF1cc1ACF30d72413ADCeAD3469701";
-      getMyNftList(deployment).then((res) => {
+      getMyNftList(this.deployment).then((res) => {
         this.nftList.push(...res.data.list);
       });
     },
@@ -83,7 +94,7 @@ export default {
     },
   },
   created() {
-    this.getList();
+    this.init();
   },
 };
 </script>

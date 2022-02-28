@@ -31,12 +31,16 @@ var __extends =
     };
   })();
 exports.__esModule = true;
-exports.UPDATE_CHAINID = exports.UPDATE_ACCOUNT = void 0;
+exports.UPDATE_CHAINID =
+  exports.UPDATE_ACCOUNT =
+  exports.UPDATE_CONTRACTADDR =
+    void 0;
 var vuex_1 = require("vuex");
 var vue_1 = require("vue");
 vue_1["default"].use(vuex_1["default"]);
 exports.UPDATE_ACCOUNT = "update-account";
 exports.UPDATE_CHAINID = "update-chainId";
+exports.UPDATE_CONTRACTADDR = "update-contractAddr";
 var InvoiceStore = /** @class */ (function (_super) {
   __extends(InvoiceStore, _super);
   function InvoiceStore() {
@@ -46,6 +50,7 @@ var InvoiceStore = /** @class */ (function (_super) {
         state: {
           account: "",
           chainId: "",
+          contractAddr: "",
         },
         mutations:
           ((_a = {}),
@@ -55,6 +60,9 @@ var InvoiceStore = /** @class */ (function (_super) {
           (_a[exports.UPDATE_CHAINID] = function (state, chainId) {
             state.chainId = chainId;
           }),
+          (_a[exports.UPDATE_CONTRACTADDR] = function (state, contractAddr) {
+            state.contractAddr = contractAddr;
+          }),
           _a),
       }) || this
     );
@@ -62,6 +70,7 @@ var InvoiceStore = /** @class */ (function (_super) {
   InvoiceStore.prototype.init = function (state) {
     this.commit(exports.UPDATE_ACCOUNT, state.account);
     this.commit(exports.UPDATE_CHAINID, state.chainId);
+    this.commit(exports.UPDATE_CONTRACTADDR, state.contractAddr);
   };
   return InvoiceStore;
 })(vuex_1["default"].Store);

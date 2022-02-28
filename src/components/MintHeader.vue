@@ -7,22 +7,43 @@
       mode="horizontal"
       text-color="#000"
       active-text-color="#2A7EED"
-      @select="handleSelect"
     >
       <el-menu-item index="/">MINT</el-menu-item>
       <el-menu-item index="/mynfts">MY NFTS</el-menu-item>
     </el-menu>
-    <div v-if="!isConnected" class="connect-wallet" @click="getConnect">
+    <div v-if="!isLogin" class="connect-wallet" @click="getConnect">
       Connect Wallet
     </div>
-    <div v-else class="connect-wallet">{{ formatAccount }}</div>
+    <div v-else class="connect-wallet">
+      <el-dropdown
+        trigger="click"
+        @command="
+          (command) => {
+            handleCommand(command);
+          }
+        "
+      >
+        <div>
+          {{ formatAccount }}
+        </div>
+        <el-dropdown-menu slot="dropdown">
+          <!-- <el-dropdown-item divided command="account">
+            <i class="el-icon-user"></i> Account</el-dropdown-item
+          > -->
+          <el-dropdown-item command="logout">
+            <i class="el-icon-download rotate-right"></i>
+            Logout</el-dropdown-item
+          >
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
   </div>
 </template>
 <script>
 import { formatNetwork, isNetworkSupported } from "@/utils";
 import { UPDATE_ACCOUNT, UPDATE_CHAINID } from "@/store";
 import contracts from "@/contracts";
-import { connect, removeToken } from "@/utils/auth";
+import { connect, getToken, removeToken } from "@/utils/auth";
 
 export default {
   computed: {
@@ -57,11 +78,23 @@ export default {
       msgHash: "",
       sig: "",
       recoveredAddress: "",
+      isLogin: false,
     };
   },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+    handleCommand(command) {
+      switch (command) {
+        case "account":
+          console.log(command);
+          break;
+        case "logout":
+          removeToken();
+          this.isLogin = false;
+          this.$router.push("/");
+          break;
+        default:
+          break;
+      }
     },
     async checkState() {
       if (window.ethereum) {
@@ -78,30 +111,31 @@ export default {
     async getConnect() {
       connect();
     },
+    getIsLogin() {
+      this.isLogin = getToken();
+      this.activePath = this.$route.path;
+    },
     listen() {
       window.ethereum.on("accountsChanged", (accounts) => {
         this.$store.commit(UPDATE_ACCOUNT, accounts[0]);
         if (accounts.length == 0) {
-          this.$router.push("/");
           removeToken();
+          this.$router.push("/");
         }
       });
       window.ethereum.on("chainChanged", (chainId) => {
         this.$store.commit(UPDATE_CHAINID, chainId);
-        // if (isNetworkSupported(chainId)) {
-        //   window.location.reload();
-        // }
-        window.location.reload();
       });
     },
   },
+
+  watch: {
+    $route: "getIsLogin",
+  },
   created() {
     this.checkState();
+    this.getIsLogin();
     this.listen();
-  },
-  mounted() {
-    this.activePath = this.$route.path;
-    console.log(this.$route);
   },
 };
 </script>
@@ -128,5 +162,8 @@ export default {
     font-size: 14px;
     cursor: pointer;
   }
+}
+.rotate-right {
+  transform: rotate(-90deg);
 }
 </style>

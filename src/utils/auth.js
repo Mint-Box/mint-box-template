@@ -1,9 +1,9 @@
 import Cookies from "js-cookie";
 import { isNetworkSupported } from "@/utils";
 import contracts from "@/contracts";
-import { exchangeCode, login } from "@/api";
+import { exchangeCode, login, getContractAddress } from "@/api";
 import { Message } from "element-ui";
-import store from "@/store";
+import store, { UPDATE_CONTRACTADDR } from "@/store";
 const TokenKey = "Token";
 
 export function getToken() {
@@ -67,4 +67,15 @@ export async function sign(nonce) {
   } finally {
     console.log("finsh");
   }
+}
+
+export async function setContractAddress() {
+  let deployment = process.env.VUE_APP_CONTRACT_ADDR;
+  if (!deployment) {
+    const { data } = await getContractAddress();
+    console.log(data);
+    deployment = data.contractAddress;
+  }
+
+  store.commit(UPDATE_CONTRACTADDR, deployment);
 }

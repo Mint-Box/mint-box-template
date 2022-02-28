@@ -93,19 +93,20 @@
   </div>
 </template>
 <script>
-import {
-  getContractAddress,
-  getNFTsCollectionItem,
-  getNFTsCollectionItemList,
-} from "@/api";
+import { getNFTsCollectionItem, getNFTsCollectionItemList } from "@/api";
 import { uint256Max, formatNetwork } from "@/utils";
 import contracts from "@/contracts";
+import { setContractAddress } from "@/utils/auth";
 
 export default {
   name: "exploreDetail",
+  computed: {
+    deployment() {
+      return this.$store.state.contractAddr;
+    },
+  },
   data() {
     return {
-      deployment: "",
       tokenId: "",
       itemInfo: null,
       nftList: [],
@@ -119,20 +120,12 @@ export default {
     };
   },
   methods: {
-    setContractAddress() {
-      this.deployment = process.env.VUE_APP_CONTRACT_ADDR;
-      if (this.deployment) {
-        this.getNftsItemInfo();
-        this.getNftsItemList();
-      } else {
-        getContractAddress().then((res) => {
-          if (res.code == 200) {
-            this.deployment = res.data.contractAddress;
-            this.getNftsItemInfo();
-            this.getNftsItemList();
-          }
-        });
+    async init() {
+      if (!this.deployment) {
+        await setContractAddress();
       }
+      this.getNftsItemInfo();
+      this.getNftsItemList();
     },
     getNftsItemInfo() {
       getNFTsCollectionItem(this.deployment).then((res) => {
@@ -494,8 +487,8 @@ export default {
       }, 500);
     },
   },
-  created() {
-    this.setContractAddress();
+  mounted() {
+    this.init();
   },
 };
 </script>
