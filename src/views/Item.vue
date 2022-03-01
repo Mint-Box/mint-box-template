@@ -96,7 +96,7 @@
 import { getNFTsCollectionItem, getNFTsCollectionItemList } from "@/api";
 import { uint256Max, formatNetwork } from "@/utils";
 import contracts from "@/contracts";
-import { setContractAddress } from "@/utils/auth";
+import { setContractAddress, getToken, connect } from "@/utils/auth";
 
 export default {
   name: "exploreDetail",
@@ -174,10 +174,14 @@ export default {
       }
       return account;
     },
-    buyNft(tokenId) {
-      if (!this.checkChainId()) {
-        return;
+    checkToken() {
+      let token = getToken();
+      if (!token) {
+        connect();
       }
+    },
+    buyNft(tokenId) {
+      this.checkToken();
       this.tokenId = tokenId;
       if (this.shouldApprove) {
         this.approve();
@@ -186,9 +190,7 @@ export default {
       }
     },
     buyNftMutiple(nftData) {
-      if (!this.checkChainId()) {
-        return;
-      }
+      this.checkToken();
       this.nftData = nftData;
       if (this.shouldApprove) {
         this.approve();
@@ -344,6 +346,9 @@ export default {
       }
     },
     mint() {
+      if (!this.checkChainId()) {
+        return;
+      }
       switch (this.type) {
         case "721":
           this.mintSingle721();
@@ -498,15 +503,14 @@ export default {
     background-image: url("../assets/images/item-banner.png");
     background-size: cover;
     background-repeat: no-repeat;
-    height: 400px;
+    min-height: 400px;
     .item-container {
       background-color: rgba(217, 208, 216, 0.5);
       .top-box {
-        width: 450px;
-        height: 400px;
+        min-height: 400px;
         margin: 0 auto;
         text-align: center;
-        padding-top: 50px;
+        padding: 50px;
         box-sizing: border-box;
         .item-icon {
           width: 56px;
@@ -535,6 +539,7 @@ export default {
           font-size: 12px;
           color: #666;
           margin-bottom: 24px;
+          word-break: break-all;
         }
         .item-num {
           display: flex;

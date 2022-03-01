@@ -78,7 +78,7 @@ export default {
     },
     getList() {
       getMyNftList(this.deployment).then((res) => {
-        this.nftList.push(...res.data.list);
+        this.nftList = res.data.list;
       });
     },
     download(img) {
