@@ -140,7 +140,9 @@ export default {
           this.count = res.data.count;
           this.rootHash = res.data.rootHash;
           this.chainId = Number(res.data.chainId);
-          this.checkApprove();
+          if (getToken()) {
+            this.checkApprove();
+          }
         }
       );
     },
@@ -174,14 +176,22 @@ export default {
       }
       return account;
     },
-    checkToken() {
+    async checkToken() {
       let token = getToken();
       if (!token) {
         connect();
+        return false;
+      } else if (!this.checkChainId()) {
+        return false;
+      } else {
+        return true;
       }
     },
-    buyNft(tokenId) {
-      this.checkToken();
+    async buyNft(tokenId) {
+      const isToken = await this.checkToken();
+      if (!isToken) {
+        return;
+      }
       this.tokenId = tokenId;
       if (this.shouldApprove) {
         this.approve();
@@ -189,8 +199,11 @@ export default {
         this.mint();
       }
     },
-    buyNftMutiple(nftData) {
-      this.checkToken();
+    async buyNftMutiple(nftData) {
+      const isToken = await this.checkToken();
+      if (!isToken) {
+        return;
+      }
       this.nftData = nftData;
       if (this.shouldApprove) {
         this.approve();
@@ -346,9 +359,6 @@ export default {
       }
     },
     mint() {
-      if (!this.checkChainId()) {
-        return;
-      }
       switch (this.type) {
         case "721":
           this.mintSingle721();

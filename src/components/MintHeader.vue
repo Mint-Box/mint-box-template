@@ -125,6 +125,7 @@ export default {
       });
       window.ethereum.on("chainChanged", (chainId) => {
         this.$store.commit(UPDATE_CHAINID, chainId);
+        window.location.reload();
       });
     },
   },
