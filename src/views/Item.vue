@@ -26,7 +26,7 @@
             </div>
             <div class="right">
               <div class="num">{{ itemInfo.owners }}</div>
-              <div class="text">Oweners</div>
+              <div class="text">Owners</div>
             </div>
           </div>
         </div>
