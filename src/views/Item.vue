@@ -48,7 +48,8 @@
             <div class="nft-name">{{ item.name + " #" + item.tokenId }}</div>
             <div class="nft-info">
               <span>Price</span>
-              <span>
+              <span class="price" v-if="item.price == '0'">Free</span>
+              <span v-else>
                 <span class="price">{{ item.price }}</span>
                 {{ item.unit }}
               </span>
